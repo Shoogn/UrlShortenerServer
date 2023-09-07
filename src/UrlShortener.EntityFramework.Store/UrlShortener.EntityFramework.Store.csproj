@@ -1,9 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <PackageId>UrlShortenerServer.EntityFramework.Store</PackageId>
+	  <Title>UrlShortenerServer.EntityFramework.Store</Title>
+	  <Authors>Mohammed Ahmed Hussien</Authors>
+	  <PackageProjectUrl>https://github.com/Shoogn/UrlShortenerServer</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Shoogn/UrlShortenerServer</RepositoryUrl>
+	  <Version>1.0.0</Version>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageTags>UrlShortener, ShortUrl</PackageTags>
+	  <NeutralLanguage>en-SD</NeutralLanguage>
+	  <Description>
+		  This is a library developed in C# language to help anyone needs a unique short url in Distrbuted Systems or any other system.
+	  </Description>
   </PropertyGroup>
 
 </Project>

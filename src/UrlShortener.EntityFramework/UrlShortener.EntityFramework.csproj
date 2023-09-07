@@ -1,13 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+	  <PackageId>UrlShortenerServer.EntityFramework</PackageId>
+	  <Title>UrlShortenerServer.EntityFramework</Title>
+	  <Authors>Mohammed Ahmed Hussien</Authors>
+	  <PackageProjectUrl>https://github.com/Shoogn/UrlShortenerServer</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Shoogn/UrlShortenerServer</RepositoryUrl>
+	  <Version>1.0.0</Version>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageTags>UrlShortener, ShortUrl</PackageTags>
+	  <NeutralLanguage>en-SD</NeutralLanguage>
+	  <Description>
+		  This is a library developed in C# language to help anyone needs a unique short url in Distrbuted Systems or any other system.
+	  </Description>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.10" />
   </ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.21" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.21" />
+	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UrlShortener.Core\UrlShortener.Core.csproj" />

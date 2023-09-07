@@ -1,13 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+	  <PackageId>UrlShortenerServer.Core</PackageId>
+	  <Title>UrlShortenerServer.Core</Title>
+	  <Authors>Mohammed Ahmed Hussien</Authors>
+	  <PackageProjectUrl>https://github.com/Shoogn/UrlShortenerServer</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Shoogn/UrlShortenerServer</RepositoryUrl>
+	  <Version>1.0.0</Version>
+	  <RepositoryType>git</RepositoryType>
+	  <PackageTags>UrlShortener, ShortUrl</PackageTags>
+	  <NeutralLanguage>en-SD</NeutralLanguage>
+	  <Description>
+		  This is a library developed in C# language to help anyone needs a unique short url in Distrbuted Systems or any other system.
+	  </Description>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
   </ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+	</ItemGroup>
 
 </Project>
