@@ -80,9 +80,10 @@ And by doing so you will get a new crated file in the Solution Explorer named Mi
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/56dcf55b-0590-4dcb-8cb3-3d0b6802bc7f)
 
 and as you can see from the migration code in the previous code the default schema name is "dbo" and the default table name is "ShortUrls" and there are three Columns comming from the ShortUrlEntity object:
-- Id ( the type of this column is bigint, long in C#)
-- LongUrl ( the type of this column is nvarchar(450), string in C#)
-- ShortUrl ( the type of this column is nvarchar(450), string in C#)
+- Id ( the type of this column is bigint, long in C#).
+- LongUrl ( the type of this column is nvarchar(450), string in C#).
+- ShortUrl ( the type of this column is nvarchar(450), string in C#).
+
 Don't worry I will show you in the second part of this explaination how to custom the UrlShortenerServer.
 So, let us run our migration file to create the database by opening the Package Manager Console again and run the following script:
 ```
@@ -127,7 +128,10 @@ Make sure to create two Views one for the Index ActionMethod and the other one f
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/56361181-07dc-47b5-baf7-149ad11fd2bf)
 
 Wow, that is great.
+
 ### How to redirect user to the Long Url?
+---
+
 You can do that by impementing your custom logic when you receving a short url, and  you can call the Redirect method from the controller, but you don't need to do that, thankfully to our UrlShortenerServer for providing us an ready Midlleware.
 Open the Program.cs class and add the following one line of code:
 
@@ -154,10 +158,104 @@ After that your browser will redirect you to the corect Long Url:
 
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/e4bccb50-9007-4f8b-8e67-6752cbe67011)
 
+### 2- Customize the UrlShortenerServer:
+---
+If you are looking carefully to the short url that is generated is the previous stpes you can see 'sh' letters that append next to the domain name, by default the UrlShortenerServer will append these letters to match short url to the correct long url in the back store (SQL Server for example.). In this section I'm going to show you how to customize the UrlShortenerServer.
+From the Package Manager Console run the following script:
 
+```C#
+PM> Drop-Database
+```
+Create a new class named CustomShortUrlsEntity and make sure to let this class inherent from ShortUrlEntity see the code below:
 
+```C#
+using UrlShortener.EntityFramework.Store;
 
+namespace MyUrlShortenerServer.Models
+{
+    /// <summary>
+    /// A new custom object that inherent from <see cref="ShortUrlEntity"/>
+    /// </summary>
+    public class CustomShortUrlsEntity : ShortUrlEntity
+    {
+        /// <summary>
+        /// This is a custom property
+        /// </summary>
+        public string? CustomeData { get; set; }
+    }
+}
+```
+Then open the BaseDBContext.cs class to update it as follow:
 
+```C#
+using Microsoft.EntityFrameworkCore;
+using UrlShortener.EntityFramework;
 
+namespace MyUrlShortenerServer.Models
+{
+    public class BaseDBContext : UrlShortenerDbContext<CustomShortUrlsEntity>
+    {
+        public BaseDBContext(DbContextOptions<BaseDBContext> options) : base(options) { }
+    }
+}
+```
 
+If you look by opening eyes you will see that the UrlShortenerDbContext object is accept a parameter type, and the type here should be (a) ShortUrlEntity object, and the CustomShortUrlsEntity object is a valid ShortUrlEntity object because it inherent from it. 
+
+Open the Program.cs file and change the default setting of the Url Shortener to be like so:
+
+```C#
+builder.Services.AddUrlShortener<CustomShortUrlsEntity>(options =>
+{
+    options.ShortUrlPrefix = "/cu";
+    options.UsePermanentRedirect = true;
+    options.DomainName = "";
+    options.UseUrlShortenerInTheSameDomain = true; // by default is true
+
+}).AddUrlShortenerEntityFrameworkStores<BaseDBContext>(options =>
+{
+    options.ShortUrlMaxLength = 50;
+    options.LongUrlMaxLength = 100;
+    options.ShemaName = "common";
+    options.TableName = "CustomShortUlrs";
+});
+
+```
+
+Fro the above code we configure the UrlShortenerServer to accept our custom behaviour. The AddUrlShortener extensiom nethod accept a nullable Action<UrlShortenerOptions> parameter,
+that let you to change the Short Url Prefix, as well as the type Permanent Redirect is it 301 or 302, and there are two critical properties DomainName and UseUrlShortenerInTheSameDomain,
+the UseUrlShortenerInTheSameDomain property is a boolean, and by default is equal to true and that is mean you are going to use the UrlShortenerServer in your current application for that reason the UrlShortenerServer need ShortUrlPrefix to differentiate between the short url and the normal url, the DomainName property if it is not null or empty or whitespace (if it has a value it should be a valid URI) so that means you are going to use the UrlShortenerServer in a sperate domain then when the UrlShortenerServer generate a short url will not append the ShortUrlPrefix value that short url instead of that it take the name of the domain that is provide in DomainName property and then append the shorturl (Base62) to the  DomainName but you have to make sure by set the UseUrlShortenerInTheSameDomain value to false.
+Now let us to add a new Migration by opening the Package Manager Console and run this script:
+
+```
+PM> Add-Migration -Name init
+```
+
+and updating the database as well by applying the below script:
+
+```
+PM> Update-Database
+```
+
+If you looking to the generated migration file you will see a somthing similar to the following:
+
+![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/bc8e9765-5ae4-4ad3-ba65-cf69d03a3d49)
+
+As you can see the schema name is typical to the one that we provide in our AddUrlShortenerEntityFrameworkStores configuration also the name of the table is changed to CustomShortUlrs instead of the default one (ShortUrls) also the length of the LongUrl and ShortUrl is changed to (100/50) respectfully isntead of the default one (450) and the last things our custom CustomeData property is added to file as well.
+
+Before running app make sure to change to prameter type of the UrlShortenerManager to our new CustomShortUrlsEntity object:
+
+```C#
+       public readonly UrlShortenerManager<CustomShortUrlsEntity> _manager;
+       public HomeController(UrlShortenerManager<CustomShortUrlsEntity> manager)
+       {
+           _manager = manager;
+       }
+```
+Fire the app now and open the table in your back store ( in my case is SQL Server):
+
+![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/823d21fa-6d0a-4e4a-95a8-d854c558041f)
+
+Copy the Short Url and paste it in a new tab in your browser and then hit Enter key in your keyboard, then the browser will redirect you to the long url without any issues.
+Thenks for reading!
 
