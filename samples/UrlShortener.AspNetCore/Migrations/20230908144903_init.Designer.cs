@@ -11,8 +11,8 @@ using UrlShortener.AspNetCore.Models;
 namespace UrlShortener.AspNetCore.Migrations
 {
     [DbContext(typeof(BaseDbContext))]
-    [Migration("20230904174627_initi")]
-    partial class initi
+    [Migration("20230908144903_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

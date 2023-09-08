@@ -24,12 +24,7 @@ public static class UrlShortenerRedirectionBuilderExtensions
     {
         if(app == null)
             throw new ArgumentNullException(nameof(app));
-
-        var shortenerOptions = app.ApplicationServices.GetService<UrlShortenerOptions>();
-        if(shortenerOptions ==null) 
-            throw new ArgumentNullException(nameof(shortenerOptions));
-
-        app.UseMiddleware<UrlShortenerMiddleware<TUrlShortener>>(shortenerOptions);
+        app.UseMiddleware<UrlShortenerMiddleware<TUrlShortener>>();
 
         return app;
     }
