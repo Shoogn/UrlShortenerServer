@@ -5,17 +5,16 @@ This is url shortener server that help you to generate a Base62 short url in you
 
 ### 1- The Basic Installtion:
 Create a new Asp.Net Core Empty project that target .NET 6.0 or .NET 7.0.
-Second things you have to do is to install the required nuget package.
-For any .NET application higher than .Net 6 install the library by using NuGet package command
+Second things you have to do is to install the required nuget package, install the library by using NuGet package command
 ```
 dotnet add package UrlShortenerServer.EntityFramework --version 1.0.0
 ```
-Or by using the nuget package manager from Visual Studio like below
+Or by using the nuget package manager from Visual Studi:
 
 ![nuget](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/aa175b58-f32b-47a6-b59c-2ae1d1b971c4)
 
 ---
-Create a new folder named Models and inside this foler create a new class named BaseDBContext, the signature of this class is like following:
+Create a new folder named Models and inside this foler create a new class named BaseDBContext, the signature of this class it looks like the following:
 
 ```C#
 using Microsoft.EntityFrameworkCore;
@@ -59,42 +58,42 @@ app.MapDefaultControllerRoute();
 app.Run();
 ```
 
-The most important part in the previous code is the following section
+The most important part in the previous code from the Program.cs file is the following section:
 
 ```C#
 builder.Services.AddUrlShortener<ShortUrlEntity>()
     .AddUrlShortenerEntityFrameworkStores<BaseDBContext>();
 ```
-And this is the default configuration to register the UrlShortenerServer to your project. So let us add the migration to the project, make sure to install the
+And this is the default configuration to register the UrlShortenerServer to your project. So let us add the migration to the project, make sure to install the required package to be able to create a new migration file:
 
 ```
 Microsoft.EntityFrameworkCore.Tools 7.0.10
 ```
 
-to be able to add a new migration file, then open the Package Manager Console and run this script:
+after that open the Package Manager Console and run this script:
 ```
 PM> Add-Migration -Name init
 ```
-And by doing so you will get a new crated file in the Solution Explorer named Migrations and you will find a new file name {uniquenumber_init.cs} see the next picture:
+And by doing so you will get a new created file in the Solution Explorer named Migrations and inside that folder you will find a new file nameed {uniquenumber_init.cs} see the next picture:
 
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/56dcf55b-0590-4dcb-8cb3-3d0b6802bc7f)
 
-and as you can see from the migration code in the previous code the default schema name is "dbo" and the default table name is "ShortUrls" and there are three Columns comming from the ShortUrlEntity object:
+and as you can see from the migration code in the previous picture the default schema name is "dbo" and the default table name is "ShortUrls" and there are three Columns which are comming from the ShortUrlEntity object:
 - Id ( the type of this column is bigint, long in C#).
 - LongUrl ( the type of this column is nvarchar(450), string in C#).
 - ShortUrl ( the type of this column is nvarchar(450), string in C#).
 
-Don't worry I will show you in the second part of this explaination how to custom the UrlShortenerServer.
+Don't worry I will show you in the second part of this explaination how to customize the UrlShortenerServer.
 So, let us run our migration file to create the database by opening the Package Manager Console again and run the following script:
 ```
 PM> Update-Database
 ```
-And by pressing Enter key in your keyboard EF Core will create a new database with the given name from the ConnectionStrings in the appsettings.json file and here is the described picture:
+And by pressing Enter key in your keyboard EF Core will create a new database with the given name that is defined in the ConnectionStrings in the appsettings.json file and here is the described picture:
 
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/481dba1b-8761-4d56-8d53-294db8358a28)
 
 Ok, untile now we prepare our application to work with UrlShortenerServer, but how can we create a new short url?
-In the Controllers folder create a new file named HomeController.cs file, we need to inject a new class named: UrlShortenerManager and this is a parameter type class, and accept any object of type ShortUrlEntity, the signature of HomeController class is like following:
+In the Controllers folder create a new file named HomeController.cs file, we need to inject a new class named: UrlShortenerManager and this is a parameter type class, and accept any object of type ShortUrlEntity, the signature of HomeController class it looks like the following:
 
 ```C#
  public class HomeController : Controller
@@ -120,8 +119,8 @@ In the Controllers folder create a new file named HomeController.cs file, we nee
  }
 ```
 
-From the above code we have method named CreateAsync from the UrlShortenerManager object, and this method take one parameter of type string and this parameter should be your long url
-and the return type of calling this method is ShortUrlEntity object. which conatins the Id, ShortUrl, and LongUrl. And from that example our long url is "https://localhost:7031/Home/Data" so we need to create a short url from it.
+From the above code we have a method named *CreateAsync* from the UrlShortenerManager object, and this method accept one parameter of type string and this parameter should be your long url
+and the return type of this method is *ShortUrlEntity* object. which conatins the Id, ShortUrl, and LongUrl properties. And from that example our long url is "https://localhost:7031/Home/Data" so we need to create a short url from it.
 Later on I will show you how to add your custom properties if your busniess needs that.
 Make sure to create two Views one for the Index ActionMethod and the other one for the Data ActionMethod. And then run the app, after that open the Database and open the ShortUrls table data to see the result of calling the CreateAsync method, see the below picture:
 
@@ -166,7 +165,7 @@ From the Package Manager Console run the following script:
 ```C#
 PM> Drop-Database
 ```
-Create a new class named CustomShortUrlsEntity and make sure to let this class inherent from ShortUrlEntity see the code below:
+Create a new class named CustomShortUrlsEntity and make sure to let this class inherit from ShortUrlEntity see the code below:
 
 ```C#
 using UrlShortener.EntityFramework.Store;
@@ -200,7 +199,7 @@ namespace MyUrlShortenerServer.Models
 }
 ```
 
-If you look by opening eyes you will see that the UrlShortenerDbContext object is accept a parameter type, and the type here should be (a) ShortUrlEntity object, and the CustomShortUrlsEntity object is a valid ShortUrlEntity object because it inherent from it. 
+If you look by opening eyes you will see that the UrlShortenerDbContext object is accept a parameter type, and the type here should be (a) ShortUrlEntity object, and the CustomShortUrlsEntity object is a valid ShortUrlEntity object because it inherit from it. 
 
 Open the Program.cs file and change the default setting of the Url Shortener to be like so:
 
