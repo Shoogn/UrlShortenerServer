@@ -1,5 +1,5 @@
 # Url Shortener Server
-This is url shortener server tht help you to generate a Base62 short url in your .NET application that target .NET 6.0 or .NET 7.0.
+This is url shortener server that help you to generate a Base62 short url in your .NET application that target .NET 6.0 or .NET 7.0.
 
 ## Get Started
 
@@ -150,7 +150,7 @@ app.MapDefaultControllerRoute();
 app.Run();
 ```
 
-Copy the ShortUrl from the ShortUrls table and run the app again and open a new tab in your browser and paste the SHortUrl that you're copied and hit the Enter key in your keyboard:
+Copy the ShortUrl from the ShortUrls table and run the app again and open a new tab in your browser and paste the SHortUrl that you have copied and hit the Enter key in your keyboard:
 
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/d9b2625a-ee33-47e2-881e-2d8df54103af)
 
