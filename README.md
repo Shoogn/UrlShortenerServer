@@ -199,7 +199,7 @@ namespace MyUrlShortenerServer.Models
 }
 ```
 
-If you look by opening eyes you will see that the UrlShortenerDbContext object is accept a parameter type, and the type here should be (a) ShortUrlEntity object, and the CustomShortUrlsEntity object is a valid ShortUrlEntity object because it inherit from it. 
+If you look by opening eyes you will see that the UrlShortenerDbContext object is accept a type parameter, and the type here should be (a) ShortUrlEntity object, and the CustomShortUrlsEntity object is a valid ShortUrlEntity object because it inherit from it. 
 
 Open the Program.cs file and change the default setting of the Url Shortener to be like so:
 
@@ -221,22 +221,22 @@ builder.Services.AddUrlShortener<CustomShortUrlsEntity>(options =>
 
 ```
 
-Fro the above code we configure the UrlShortenerServer to accept our custom behaviour. The AddUrlShortener extensiom nethod accept a nullable Action<UrlShortenerOptions> parameter,
-that let you to change the Short Url Prefix, as well as the type Permanent Redirect is it 301 or 302, and there are two critical properties DomainName and UseUrlShortenerInTheSameDomain,
-the UseUrlShortenerInTheSameDomain property is a boolean, and by default is equal to true and that is mean you are going to use the UrlShortenerServer in your current application for that reason the UrlShortenerServer need ShortUrlPrefix to differentiate between the short url and the normal url, the DomainName property if it is not null or empty or whitespace (if it has a value it should be a valid URI) so that means you are going to use the UrlShortenerServer in a sperate domain then when the UrlShortenerServer generate a short url will not append the ShortUrlPrefix value that short url instead of that it take the name of the domain that is provide in DomainName property and then append the shorturl (Base62) to the  DomainName but you have to make sure by set the UseUrlShortenerInTheSameDomain value to false.
-Now let us to add a new Migration by opening the Package Manager Console and run this script:
+From the above code we configure the UrlShortenerServer to accept our custom behaviour. The AddUrlShortener extensiom method accept a nullable Action<UrlShortenerOptions> parameter,
+that let you change the Short Url Prefix, as well as the  Permanent Redirect type, (301 or 302) by default is Permanent, and there are two critical properties, the first one is DomainName and and the second one is UseUrlShortenerInTheSameDomain,
+the UseUrlShortenerInTheSameDomain property is a boolean, and by default is equal to true and that means you are going to use the UrlShortenerServer in your current application and for that reason the UrlShortenerServer needs to set a ShortUrlPrefix value to differentiate between the short url and the normal url, and for the DomainName property, if it is not null or empty or whitespace (if it has a value - it should be a valid URI) so that means you are going to use the UrlShortenerServer in a **sperate** domain then, when the UrlShortenerServer generate a short url will not append the ShortUrlPrefix value for that short url instead of that it take the name of the domain that is provide in DomainName property and then append the shorturl (Base62) to the DomainName, but you have to make sure by to assign the value of the UseUrlShortenerInTheSameDomain property to false.
+Now let us add a new Migration file by opening the Package Manager Console and run the following script:
 
 ```
 PM> Add-Migration -Name init
 ```
 
-and updating the database as well by applying the below script:
+and updating the database as well by applying the following script:
 
 ```
 PM> Update-Database
 ```
 
-If you looking to the generated migration file you will see a somthing similar to the following:
+If you looking at the generated migration file you will see somthing similar to the following:
 
 ![image](https://github.com/Shoogn/UrlShortenerServer/assets/18530495/bc8e9765-5ae4-4ad3-ba65-cf69d03a3d49)
 
