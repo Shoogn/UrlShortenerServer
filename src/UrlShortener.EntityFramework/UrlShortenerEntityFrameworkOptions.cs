@@ -11,7 +11,7 @@ namespace UrlShortener.EntityFramework;
 public sealed class UrlShortenerEntityFrameworkOptions
 {
     /// <summary>
-    /// The default the length for short and long url.
+    /// The default length for short and long url.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public const int DEFAULT_MAX_LENGTH = 450;

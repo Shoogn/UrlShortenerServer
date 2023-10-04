@@ -14,7 +14,7 @@ namespace UrlShortener.AspNetCore.Controllers
         public async Task<IActionResult> Index()
         {
             string longUrl = "https://localhost:7031/Home/Data";
-            var res = await _manager.CreateAsync(longUrl);
+            var res = await _manager.CreateAsync(new ShortUrlEntity(), longUrl);
             return View();
         }
 

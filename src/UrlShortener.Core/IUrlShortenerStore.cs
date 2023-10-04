@@ -20,7 +20,7 @@ public interface IUrlShortenerStore<TUrlShortener> where TUrlShortener : class
     /// <param name="shortUrl">Short url.</param>
     /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns>Type of Url Shortener object.</returns>
-    ValueTask<TUrlShortener> CreateAsync(long id, string longUrl, string shortUrl, CancellationToken cancellationToken);
+    ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken);
 
     /// <summary>
     /// Get the short url object by long url.
@@ -37,5 +37,16 @@ public interface IUrlShortenerStore<TUrlShortener> where TUrlShortener : class
     /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns>The long url as string.</returns>
     ValueTask<string> GetLongUrlAsync(string shortUrl, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Set the default value for <see cref="TUrlShortener"/> object.
+    /// </summary>
+    /// <param name="urlShortener">The type object of the TUrlShortener </param>
+    /// <param name="id">The id value.</param>
+    /// <param name="longUrl">The longUrl value.</param>
+    /// <param name="shortUrl">The shortUrl value.</param>
+    /// <param name="cancellationToken">cancellationToken.</param>
+    /// <returns></returns>
+    Task SetUrlShortenerAsync(TUrlShortener urlShortener, long id, string longUrl, string shortUrl, CancellationToken cancellationToken);
 }
 

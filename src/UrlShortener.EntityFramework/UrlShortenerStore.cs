@@ -49,25 +49,14 @@ public class UrlShortenerStore<TUrlShortener, TContext>
 
         Context = context;
     }
-    private const string _alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     public virtual TContext Context { get; private set; }
     private DbSet<TUrlShortener> UrlShortenersContext { get { return Context.Set<TUrlShortener>(); } }
 
-    public virtual async ValueTask<TUrlShortener> CreateAsync(long id, string longUrl, string shortUrl, CancellationToken cancellationToken)
+    public virtual async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (string.IsNullOrWhiteSpace(shortUrl))
-            throw new ArgumentNullException(nameof(longUrl));
-
-        var urlShortenerobj = new TUrlShortener
-        {
-            Id = id,
-            LongUrl = longUrl,
-            ShortUrl = shortUrl
-        };
-        UrlShortenersContext.Add(urlShortenerobj);
-
+        var urlShortenerobj = UrlShortenersContext.Add(urlShortener).Entity;
         int savedItem = await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return savedItem > 0 ? urlShortenerobj : throw new InvalidOperationException("longUrl is not saved");
     }
@@ -91,6 +80,16 @@ public class UrlShortenerStore<TUrlShortener, TContext>
         if (data is null)
             throw new NullReferenceException(nameof(shortUrl));
         return data.LongUrl;
+    }
+
+
+    public virtual Task SetUrlShortenerAsync(TUrlShortener urlShortener, long id, string longUrl, string shortUrl, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        urlShortener.Id = id;
+        urlShortener.LongUrl = longUrl;
+        urlShortener.ShortUrl = shortUrl;
+        return Task.CompletedTask;
     }
 }
 

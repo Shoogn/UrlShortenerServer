@@ -32,12 +32,24 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
     /// Create a new short url.
     /// </summary>
     /// <param name="longUrl">The long url.</param>
-    /// <param name="cancellationToken">cancellationToken</param>
+    /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns></returns>
-    public async ValueTask<TUrlShortener> CreateAsync(string longUrl, CancellationToken cancellationToken = default)
+    public async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken = default)
+    {
+        var rseult = await UrlShortenerStore.CreateAsync(urlShortener, cancellationToken).ConfigureAwait(false);
+        return rseult;
+    }
+
+    /// <summary>
+    /// Create a new short url.
+    /// </summary>
+    /// <param name="urlShortener">TUrlShortener object</param>
+    /// <param name="longUrl">longUrl.</param>
+    /// <param name="cancellationToken">cancellationToken.</param>
+    /// <returns></returns>
+    public async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, string longUrl, CancellationToken cancellationToken = default)
     {
         var longUrlTemp = CheckLongUrl(longUrl);
-
         var isLongUrlExist = await FindByLongUrlAsync(longUrl, cancellationToken);
         if (isLongUrlExist is not null)
             return isLongUrlExist;
@@ -55,8 +67,8 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
             shorturl = $"{UrlShortenerOptions.DomainName}/{shorturlAsBase62}";
         }
 
-        var rseult = await UrlShortenerStore.CreateAsync(id, longUrl, shorturl, cancellationToken).ConfigureAwait(false);
-        return rseult;
+        await UrlShortenerStore.SetUrlShortenerAsync(urlShortener, id, longUrl, shorturl, cancellationToken).ConfigureAwait(false);
+        return await CreateAsync(urlShortener).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -100,6 +112,7 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
 
 
     }
+
     private string ToBase62(long number)
     {
         long n = number;
