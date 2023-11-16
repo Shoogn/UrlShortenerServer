@@ -7,6 +7,7 @@ namespace UrlShortener.Core.Services;
 /// <summary>
 /// The implementation of this classes is taken from the https://github.com/Shoogn/SnowflakeId repo
 /// which is twiteer's unique id algorithm.
+/// <see cref="https://github.com/Shoogn/SnowflakeId"/>
 /// </summary>
 internal class UrlShortenerUniqueId
 {

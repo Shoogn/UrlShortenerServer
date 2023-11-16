@@ -34,7 +34,7 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
     /// <param name="longUrl">The long url.</param>
     /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns></returns>
-    public async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken = default)
+    private async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken = default)
     {
         var rseult = await UrlShortenerStore.CreateAsync(urlShortener, cancellationToken).ConfigureAwait(false);
         return rseult;
