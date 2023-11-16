@@ -7,7 +7,7 @@ This is url shortener server that help you to generate a Base62 short url in you
 Create a new Asp.Net Core Empty project that target .NET 6.0 or .NET 7.0.
 Second things you have to do is to install the required nuget package, install the library by using NuGet package command
 ```
-dotnet add package UrlShortenerServer.Core --version 1.0.1
+dotnet add package UrlShortenerServer.Core --version 1.2.0
 ```
 Or by using the nuget package manager from Visual Studi:
 
