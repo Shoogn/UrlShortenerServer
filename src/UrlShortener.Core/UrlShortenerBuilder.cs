@@ -35,5 +35,11 @@ public sealed class UrlShortenerBuilder
     /// Type of the short url object.
     /// </summary>
     public Type ShortUrlType { get; set; }
+
+    public UrlShortenerBuilder AddLongUrlValidator<TValidator>() where TValidator : class
+    {
+        Services.AddScoped(typeof(ILongUrlValidator), typeof(TValidator));
+        return this;
+    }
 }
 

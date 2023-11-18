@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UrlShortener.Core.Services;
@@ -16,17 +17,26 @@ namespace UrlShortener.Core;
 public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
 {
     private const string _alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    public UrlShortenerManager(IUrlShortenerStore<TUrlShortener> urlShortenerStore, 
-        IOptions<UrlShortenerOptions> options)
+    public UrlShortenerManager(IUrlShortenerStore<TUrlShortener> urlShortenerStore,
+        IOptions<UrlShortenerOptions> options, IEnumerable<ILongUrlValidator> longUrlValidators)
     {
         if (urlShortenerStore == null)
             throw new ArgumentNullException(nameof(urlShortenerStore));
         UrlShortenerStore = urlShortenerStore;
 
         UrlShortenerOptions = options?.Value ?? new UrlShortenerOptions();
+
+        if (longUrlValidators is not null)
+        {
+            foreach (var validator in longUrlValidators)
+                LongUrlValidators.Add(validator);
+        }
+
+
     }
     protected IUrlShortenerStore<TUrlShortener> UrlShortenerStore { get; private set; }
     public UrlShortenerOptions UrlShortenerOptions { get; set; }
+    public IList<ILongUrlValidator> LongUrlValidators { get; } = new List<ILongUrlValidator>();
 
     /// <summary>
     /// Create a new short url.
@@ -49,7 +59,7 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
     /// <returns></returns>
     public async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, string longUrl, CancellationToken cancellationToken = default)
     {
-        var longUrlTemp = CheckLongUrl(longUrl);
+        var longUrlTemp = await ValidateLongUrlAsync(longUrl);
         var isLongUrlExist = await FindByLongUrlAsync(longUrl, cancellationToken);
         if (isLongUrlExist is not null)
             return isLongUrlExist;
@@ -94,21 +104,14 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
         return data;
     }
 
-    private Uri CheckLongUrl(string longUrl)
+    protected async Task<Uri> ValidateLongUrlAsync(string longUrl)
     {
-        try
+        foreach (var url in LongUrlValidators)
         {
-            Uri longUrlTemp = new Uri(longUrl);
-            return longUrlTemp;
+            await url.ValidateAsync(longUrl).ConfigureAwait(false);
         }
-        catch (ArgumentNullException)
-        {
-            throw new ArgumentNullException(nameof(longUrl));
-        }
-        catch (UriFormatException)
-        {
-            throw new UriFormatException(nameof(longUrl));
-        }
+
+        return new Uri(longUrl);
 
 
     }
