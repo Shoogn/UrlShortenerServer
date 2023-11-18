@@ -29,7 +29,7 @@ public static class UrlShortenerServiceCollectionExtensions
             services.AddOptions();
         else
             services.Configure(options);
-
+        services.TryAddScoped<ILongUrlValidator, LongUrlValidator>();
         services.TryAddScoped<UrlShortenerManager<TUrlShortener>>();
         return new UrlShortenerBuilder(typeof(TUrlShortener), services);
     }
