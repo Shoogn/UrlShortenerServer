@@ -28,7 +28,7 @@ public class UrlShortenerMiddleware<TUrlShortener> where TUrlShortener : class
             {
                 string url = $"{context.Request.Scheme}://{context.Request.Host.Value}{path}";
                 var longUrl = await urlShortenerManager.GetLongUrlAsync(url);
-                context.Response.Redirect(longUrl, permanent: urlShortenerOptions.Value.UsePermanentRedirect);
+                context.Response.Redirect(longUrl, permanent: urlShortenerOptions.Value.UrlRedirectionType == RedirectionType.Permanent ? true : false);
             }
             else
             {
@@ -42,7 +42,7 @@ public class UrlShortenerMiddleware<TUrlShortener> where TUrlShortener : class
             if (urlShortenerOptions.Value.DomainName.Equals(host.Value))
             {
                 var longUrl = await urlShortenerManager.GetLongUrlAsync(path);
-                context.Response.Redirect(longUrl, permanent: urlShortenerOptions.Value.UsePermanentRedirect);
+                context.Response.Redirect(longUrl, permanent: urlShortenerOptions.Value.UrlRedirectionType == RedirectionType.Permanent ? true : false);
             }
             else
             {

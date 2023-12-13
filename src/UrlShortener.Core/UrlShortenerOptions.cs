@@ -27,6 +27,6 @@ public class UrlShortenerOptions
     /// <summary>
     /// Set the Redirection type, and by default is Permanent.
     /// </summary>
-    public bool UsePermanentRedirect { get; set; } = true;
+    public RedirectionType UrlRedirectionType { get; set; } = RedirectionType.Permanent;
 }
 
