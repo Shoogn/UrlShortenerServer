@@ -4,7 +4,7 @@ using System.Threading;
 namespace UrlShortener.Core;
 
 /// <summary>
-/// An interface holds the requied methods that intgrate with the 
+/// An interface holds the required methods that integrate with the 
 /// url shortener object that is define in the program.cs file when adding AddUrlShortener service.
 /// </summary>
 public interface IUrlShortenerManager
