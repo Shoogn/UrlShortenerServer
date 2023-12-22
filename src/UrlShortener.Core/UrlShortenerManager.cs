@@ -14,7 +14,7 @@ namespace UrlShortener.Core;
 /// The container class that provide methods to manage all things about url shortener.
 /// </summary>
 /// <typeparam name="TUrlShortener">the type of the url shortener.</typeparam>
-public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
+public class UrlShortenerManager<TUrlShortener> : IUrlShortenerManager where TUrlShortener : class
 {
     private const string _alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     public UrlShortenerManager(IUrlShortenerStore<TUrlShortener> urlShortenerStore,
@@ -38,17 +38,7 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
     public UrlShortenerOptions UrlShortenerOptions { get; set; }
     public IList<ILongUrlValidator> LongUrlValidators { get; } = new List<ILongUrlValidator>();
 
-    /// <summary>
-    /// Create a new short url.
-    /// </summary>
-    /// <param name="longUrl">The long url.</param>
-    /// <param name="cancellationToken">cancellationToken.</param>
-    /// <returns></returns>
-    private async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken = default)
-    {
-        var rseult = await UrlShortenerStore.CreateAsync(urlShortener, cancellationToken).ConfigureAwait(false);
-        return rseult;
-    }
+
 
     /// <summary>
     /// Create a new short url.
@@ -57,7 +47,7 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
     /// <param name="longUrl">longUrl.</param>
     /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns></returns>
-    public async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, string longUrl, CancellationToken cancellationToken = default)
+    public virtual async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, string longUrl, CancellationToken cancellationToken = default)
     {
         var longUrlTemp = await ValidateLongUrlAsync(longUrl);
         var isLongUrlExist = await FindByLongUrlAsync(longUrl, cancellationToken);
@@ -87,7 +77,7 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
     /// <param name="longUrl">The long url.</param>
     /// <param name="cancellationToken">cancellationToken.</param>
     /// <returns></returns>
-    public async Task<TUrlShortener> FindByLongUrlAsync(string longUrl, CancellationToken cancellationToken = default)
+    public virtual async Task<TUrlShortener> FindByLongUrlAsync(string longUrl, CancellationToken cancellationToken = default)
     {
         return await UrlShortenerStore.FindByLongUrlAsync(longUrl, cancellationToken).ConfigureAwait(false);
     }
@@ -114,6 +104,36 @@ public class UrlShortenerManager<TUrlShortener> where TUrlShortener : class
         return new Uri(longUrl);
 
 
+    }
+
+    /// <inheritdoc/>
+    async ValueTask<object> IUrlShortenerManager.CreateAsync(object urlShortenerObj, string longUrl, CancellationToken cancellationToken)
+    {
+        return await CreateAsync((TUrlShortener)urlShortenerObj, longUrl, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    async Task<object> IUrlShortenerManager.FindByLongUrlAsync(string longUrl, CancellationToken cancellationToken)
+    {
+        return await FindByLongUrlAsync(longUrl, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    async ValueTask<string> IUrlShortenerManager.GetLongUrlAsync(string shortUrl, CancellationToken cancellationToken)
+    {
+        return await GetLongUrlAsync(shortUrl, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Create a new short url.
+    /// </summary>
+    /// <param name="longUrl">The long url.</param>
+    /// <param name="cancellationToken">cancellationToken.</param>
+    /// <returns></returns>
+    private async ValueTask<TUrlShortener> CreateAsync(TUrlShortener urlShortener, CancellationToken cancellationToken = default)
+    {
+        var rseult = await UrlShortenerStore.CreateAsync(urlShortener, cancellationToken).ConfigureAwait(false);
+        return rseult;
     }
 
     private string ToBase62(long number)
