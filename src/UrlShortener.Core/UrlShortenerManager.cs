@@ -107,9 +107,9 @@ public class UrlShortenerManager<TUrlShortener> : IUrlShortenerManager where TUr
     }
 
     /// <inheritdoc/>
-    async ValueTask<object> IUrlShortenerManager.CreateAsync(object urlShortener, string longUrl, CancellationToken cancellationToken)
+    async ValueTask<object> IUrlShortenerManager.CreateAsync(object urlShortenerObj, string longUrl, CancellationToken cancellationToken)
     {
-        return await CreateAsync((TUrlShortener)urlShortener, longUrl, cancellationToken).ConfigureAwait(false);
+        return await CreateAsync((TUrlShortener)urlShortenerObj, longUrl, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>

@@ -41,5 +41,16 @@ public sealed class UrlShortenerBuilder
         Services.AddScoped(typeof(ILongUrlValidator), typeof(TValidator));
         return this;
     }
+
+    public UrlShortenerBuilder Configure(Action<UrlShortenerOptions> configuration)
+    {
+        if(configuration == null)
+        {
+            throw new ArgumentNullException(nameof (configuration));
+        }
+
+        Services.Configure(configuration);
+        return this;
+    }
 }
 

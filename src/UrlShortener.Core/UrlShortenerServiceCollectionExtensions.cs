@@ -22,15 +22,21 @@ public static class UrlShortenerServiceCollectionExtensions
     public static UrlShortenerBuilder AddUrlShortener<TUrlShortener>(this IServiceCollection services, Action<UrlShortenerOptions> options = null)
         where TUrlShortener : class
     {
-        //UrlShortenerOptions o = new UrlShortenerOptions();
-        //services.AddSingleton(o);
-        //options?.Invoke(o);
-        if (options == null)
-            services.AddOptions();
-        else
-            services.Configure(options);
+        services.AddOptions();
+        UrlShortenerOptions o = new UrlShortenerOptions();
+        services.AddSingleton(o);
+        options?.Invoke(o);
+
         services.TryAddScoped<ILongUrlValidator, LongUrlValidator>();
         services.TryAddScoped<UrlShortenerManager<TUrlShortener>>();
+
+        services.TryAddScoped(static provider =>
+        {
+            var urlShortenerManager = (IUrlShortenerManager)provider.GetRequiredService(
+                typeof(UrlShortenerManager<>).MakeGenericType(typeof(TUrlShortener)));
+            return urlShortenerManager;
+        });
+
         return new UrlShortenerBuilder(typeof(TUrlShortener), services);
     }
 
